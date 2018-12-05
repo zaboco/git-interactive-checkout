@@ -9,7 +9,7 @@ const localGit = git(workingDir);
 
 async function checkoutBranch() {
   const { all: rawBranches, current } = await localGit.branch();
-  const branches = stripRemotesPrefix(sortBranches(rawBranches, current));
+  const branches = removeOriginDuplicates(stripRemotesPrefix(hoistCurrentBranch(rawBranches, current)));
   const { value: newBranch } = await getPrompt(branches);
   const normalizedBranch = newBranch.replace(/^origin\//, '')
   localGit.checkout(normalizedBranch);
@@ -38,8 +38,19 @@ async function getPrompt(branches) {
   });
 }
 
-function sortBranches(branches, current) {
+function hoistCurrentBranch(branches, current) {
   return [current, ...branches.filter(branch => branch !== current)];
+}
+
+function removeOriginDuplicates(branches) {
+  const allOriginBranches = branches.filter(branch => branch.startsWith('origin/'))
+  const localBranches = branches.filter(branch => !branch.startsWith('origin/'))
+  const originOnlyBranches = allOriginBranches.filter(branch => !localBranches.includes(getLocalName(branch)))
+  return [...localBranches, ...originOnlyBranches]
+}
+
+function getLocalName(branch) {
+  return branch.replace(/^origin\//, '');
 }
 
 function stripRemotesPrefix(branches) {
