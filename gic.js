@@ -10,9 +10,11 @@ const localGit = git(workingDir);
 async function checkoutBranch() {
   const { all: rawBranches, current } = await localGit.branch();
   const branches = removeOriginDuplicates(stripRemotesPrefix(hoistCurrentBranch(rawBranches, current)));
-  const { value: newBranch } = await getPrompt(branches);
-  const normalizedBranch = newBranch.replace(/^origin\//, '')
-  localGit.checkout(normalizedBranch);
+  try {
+    const { value: newBranch } = await getPrompt(branches);
+    localGit.checkout(getLocalName(newBranch));
+  } catch (_e) {
+  }
 }
 
 async function getPrompt(branches) {
