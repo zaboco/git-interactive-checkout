@@ -8,7 +8,7 @@
     "git-interactive-checkout": "lib/gic.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsc && ava",
     "build": "tsc"
   },
   "keywords": [],
@@ -22,6 +22,17 @@
   "devDependencies": {
     "@types/node": "12.6.1",
     "@types/prompts": "2.0.1",
+    "ava": "2.2.0",
+    "ts-node": "8.3.0",
     "typescript": "3.5.2"
+  },
+  "ava": {
+    "compileEnhancements": false,
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
   }
 }
