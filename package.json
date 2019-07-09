@@ -2,12 +2,14 @@
   "name": "git-interactive-checkout",
   "version": "1.0.0",
   "description": "Checkout git branches interactively",
-  "main": "gic.js",
+  "main": "lib/gic.js",
   "bin": {
-    "gic": "./gic.js"
+    "gic": "lib/gic.js",
+    "git-interactive-checkout": "lib/gic.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +18,10 @@
     "fuzzysort": "^1.1.1",
     "prompts": "^0.1.8",
     "simple-git": "^1.92.0"
+  },
+  "devDependencies": {
+    "@types/node": "12.6.1",
+    "@types/prompts": "2.0.1",
+    "typescript": "3.5.2"
   }
 }
