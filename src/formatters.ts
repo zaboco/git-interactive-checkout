@@ -11,7 +11,3 @@ export function underlined(text: string): string {
 export function highlight(text: string): string {
   return `${highlightStart}${text}${highlightEnd}`;
 }
-
-export function simpleHighlight(text: string): string {
-  return `<${text}>`;
-}

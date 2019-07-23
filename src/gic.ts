@@ -81,6 +81,7 @@ function stripRemotesPrefix(branches: string[]) {
   return branches.map(branch => branch.replace('remotes/', ''));
 }
 
+/* istanbul ignore if */
 if (require.main === module) {
   checkoutBranch(localGit, prompts);
 }
