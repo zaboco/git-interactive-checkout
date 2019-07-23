@@ -4,10 +4,7 @@ import * as fuzzysort from 'fuzzysort';
 import * as git from 'simple-git/promise';
 import { SimpleGit } from 'simple-git/promise';
 import * as prompts from 'prompts';
-import { highlightEnd, highlightStart, underlined } from './formatters';
-
-const workingDir = process.cwd();
-const localGit = git(workingDir);
+import { highlightMatchResult, underlined } from './formatters';
 
 export type PartialGitClient = Pick<SimpleGit, 'branch' | 'checkout'>;
 
@@ -24,9 +21,7 @@ export async function checkoutBranch(
   promptsFunction: (promptObject: AutocompletePromptObject) => Promise<prompts.Answers<'value'>>,
 ) {
   const { all: rawBranches, current } = await gitClient.branch(['-a', '-v']);
-  const branches = removeOriginDuplicates(
-    stripRemotesPrefix(hoistCurrentBranch(rawBranches, current)),
-  );
+  const branches = normalizeBranches(rawBranches, current);
   try {
     const { value: newBranch } = await promptsFunction(buildBranchesPrompt(branches, current));
     gitClient.checkout(getLocalName(newBranch));
@@ -43,7 +38,7 @@ function buildBranchesPrompt(branches: string[], current: string): AutocompleteP
       const matches = input
         ? fuzzysort.go(input, choices, { key: 'title' }).map(result => {
             return {
-              title: fuzzysort.highlight(result, highlightStart, highlightEnd)!,
+              title: highlightMatchResult(result),
               value: result.obj.value,
             };
           })
@@ -51,8 +46,8 @@ function buildBranchesPrompt(branches: string[], current: string): AutocompleteP
       return matches.map(match => {
         return match.value === current
           ? {
-              value: match.value,
               title: underlined(match.title),
+              value: match.value,
             }
           : match;
       });
@@ -60,8 +55,16 @@ function buildBranchesPrompt(branches: string[], current: string): AutocompleteP
   };
 }
 
+function normalizeBranches(rawBranches: string[], current: string) {
+  return removeOriginDuplicates(stripRemotesPrefix(hoistCurrentBranch(rawBranches, current)));
+}
+
 function hoistCurrentBranch(branches: string[], current: string) {
   return [current, ...branches.filter(branch => branch !== current)];
+}
+
+function stripRemotesPrefix(branches: string[]) {
+  return branches.map(branch => branch.replace('remotes/', ''));
 }
 
 function removeOriginDuplicates(branches: string[]) {
@@ -77,11 +80,8 @@ function getLocalName(branch: string) {
   return branch.replace(/^origin\//, '');
 }
 
-function stripRemotesPrefix(branches: string[]) {
-  return branches.map(branch => branch.replace('remotes/', ''));
-}
-
 /* istanbul ignore if */
 if (require.main === module) {
+  const localGit = git(process.cwd());
   checkoutBranch(localGit, prompts);
 }
