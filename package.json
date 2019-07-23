@@ -7,6 +7,9 @@
     "gic": "lib/gic.js",
     "git-interactive-checkout": "lib/gic.js"
   },
+  "files": [
+    "/lib"
+  ],
   "scripts": {
     "test": "nyc ava",
     "test-watch": "ava --verbose --watch",
