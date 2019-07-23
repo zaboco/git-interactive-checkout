@@ -29,6 +29,12 @@ testCheckout(
 );
 
 testCheckout(
+  'removes remote duplicates',
+  { branches: ['master', 'remotes/origin/master'], current: 'master', input: '' },
+  { matches: [underlined('master')], chosen: 'master' },
+);
+
+testCheckout(
   'check out the local name of the remote branch',
   { branches: ['master', 'remotes/origin/other-remote'], current: 'master', input: 'other' },
   {
