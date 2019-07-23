@@ -9,13 +9,14 @@
   },
   "scripts": {
     "test": "tsc && ava",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "ts-node src/gic.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fuzzysort": "^1.1.1",
+    "fuzzysort": "1.1.4",
     "prompts": "^0.1.8",
     "simple-git": "^1.92.0"
   },

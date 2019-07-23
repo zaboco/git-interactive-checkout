@@ -2,42 +2,62 @@
 
 import * as fuzzysort from 'fuzzysort';
 import * as git from 'simple-git/promise';
+import { SimpleGit } from 'simple-git/promise';
 import * as prompts from 'prompts';
+import { highlightEnd, highlightStart, underlined } from './formatters';
 
 const workingDir = process.cwd();
 const localGit = git(workingDir);
 
-async function checkoutBranch() {
-  const { all: rawBranches, current } = await localGit.branch(['-a', '-v']);
+export type PartialGitClient = Pick<SimpleGit, 'branch' | 'checkout'>;
+
+export type AutocompletePromptObject = {
+  type: 'autocomplete';
+  name: string;
+  message: string;
+  choices: prompts.Choice[];
+  suggest: (input: string, choices: prompts.Choice[]) => Promise<prompts.Choice[]>;
+};
+
+export async function checkoutBranch(
+  gitClient: PartialGitClient,
+  promptsFunction: (promptObject: AutocompletePromptObject) => Promise<prompts.Answers<'value'>>,
+) {
+  const { all: rawBranches, current } = await gitClient.branch(['-a', '-v']);
   const branches = removeOriginDuplicates(
     stripRemotesPrefix(hoistCurrentBranch(rawBranches, current)),
   );
   try {
-    const { value: newBranch } = await getPrompt(branches);
-    localGit.checkout(getLocalName(newBranch));
+    const { value: newBranch } = await promptsFunction(buildBranchesPrompt(branches, current));
+    gitClient.checkout(getLocalName(newBranch));
   } catch (_e) {}
 }
 
-async function getPrompt(branches: string[]) {
-  return await prompts({
+function buildBranchesPrompt(branches: string[], current: string): AutocompletePromptObject {
+  return {
     type: 'autocomplete',
     name: 'value',
     message: 'Choose branch',
-    choices: branches.map((branch, index) =>
-      index === 0
-        ? { title: `\x1b[4m${branch}\x1b[24m`, value: branch }
-        : { title: branch, value: branch },
-    ),
+    choices: branches.map(branch => ({ title: branch, value: branch })),
     suggest: async (input, choices) => {
       const matches = input
-        ? fuzzysort.go(input, choices, { key: 'title' }).map(result => ({
-            title: fuzzysort.highlight(result, '\x1b[42m', '\x1b[49m'),
-            value: result.obj.value,
-          }))
+        ? fuzzysort.go(input, choices, { key: 'title' }).map(result => {
+            return {
+              title: fuzzysort.highlight(result, highlightStart, highlightEnd)!,
+              value: result.obj.value,
+            };
+          })
         : choices;
-      return matches;
+      return matches.map(match => {
+        return match.value === current
+          ? {
+              value: match.value,
+              title: underlined(match.title),
+            }
+          : match;
+      });
     },
-  });
+  };
 }
 
 function hoistCurrentBranch(branches: string[], current: string) {
@@ -61,4 +81,6 @@ function stripRemotesPrefix(branches: string[]) {
   return branches.map(branch => branch.replace('remotes/', ''));
 }
 
-checkoutBranch();
+if (require.main === module) {
+  checkoutBranch(localGit, prompts);
+}
