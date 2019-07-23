@@ -5,7 +5,7 @@ import { highlight, underlined } from '../src/formatters';
 import { makePromptsMock } from '../__mocks__/promptsMock';
 
 testCheckout(
-  'the current branch is underlined, for no input',
+  'the current branch is underlined',
   { branches: ['master'], current: 'master', input: '' },
   { matches: [underlined('master')], chosen: 'master' },
 );
@@ -35,6 +35,12 @@ testCheckout(
     matches: [`origin/${highlight('other')}-remote`],
     chosen: 'other-remote',
   },
+);
+
+testCheckout(
+  'the current branch is chosen, if there are no matches',
+  { branches: ['master', 'other'], current: 'master', input: '#$%!' },
+  { matches: [], chosen: 'master' },
 );
 
 function testCheckout(

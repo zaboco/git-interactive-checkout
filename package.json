@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "nyc ava",
+    "test-watch": "ava --verbose --watch",
     "build": "tsc",
     "start": "ts-node src/gic.ts"
   },
