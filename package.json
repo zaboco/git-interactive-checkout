@@ -21,8 +21,8 @@
   "license": "ISC",
   "dependencies": {
     "fuzzysort": "1.1.4",
-    "prompts": "^0.1.8",
-    "simple-git": "^1.92.0"
+    "prompts": "2.2.1",
+    "simple-git": "1.124.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "0.1.3",
