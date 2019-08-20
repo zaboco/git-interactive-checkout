@@ -1,5 +1,5 @@
 import { PartialGitClient } from '../src/gic';
-import { BranchSummary } from 'simple-git/response';
+import { BranchSummary } from 'simple-git/typings/response';
 
 export interface GitClientMock extends PartialGitClient {
   mock: {
