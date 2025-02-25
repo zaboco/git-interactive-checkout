@@ -1,6 +1,6 @@
 {
   "name": "git-interactive-checkout",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Checkout git branches interactively",
   "main": "lib/gic.js",
   "bin": {
