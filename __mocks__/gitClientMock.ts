@@ -1,5 +1,5 @@
 import { PartialGitClient } from '../src/gic';
-import { BranchSummary } from 'simple-git/typings/response';
+import type { BranchSummary, Response } from 'simple-git';
 
 export interface GitClientMock extends PartialGitClient {
   mock: {
@@ -11,17 +11,22 @@ export function makeGitClientMock(branches: string[], initialCurrent: string): G
   let current = initialCurrent;
 
   return {
-    async branch(): Promise<BranchSummary> {
-      return {
+    branch(): Response<BranchSummary> {
+      return Promise.resolve({
         all: branches,
         current,
         branches: {},
         detached: false,
-      };
+      }) as Response<BranchSummary>;
     },
 
-    async checkout(newBranch: string) {
+    checkout(newBranch): Response<string> {
+      if (typeof newBranch !== 'string') {
+        return Promise.reject(new Error('Unsupported')) as Response<string>;
+      }
+
       current = newBranch;
+      return Promise.resolve(newBranch) as Response<string>;
     },
 
     mock: {

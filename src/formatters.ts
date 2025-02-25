@@ -1,5 +1,3 @@
-import * as fuzzysort from 'fuzzysort';
-
 const underlineStart = '\x1b[4m';
 const underlineEnd = '\x1b[24m';
 
@@ -15,5 +13,5 @@ export function highlight(text: string): string {
 }
 
 export function highlightMatchResult(result: Fuzzysort.Result) {
-  return fuzzysort.highlight(result, highlightStart, highlightEnd)!;
+  return result.highlight(highlightStart, highlightEnd);
 }

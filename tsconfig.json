@@ -3,11 +3,12 @@
     "target": "ES2018",
     "module": "commonjs",
     "outDir": "./lib",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["./src/*"]
+  "include": ["./src/*", "./__mocks__/*"],
+  "exclude": ["node_modules"]
 }
