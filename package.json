@@ -2,13 +2,13 @@
   "name": "git-interactive-checkout",
   "version": "2.0.0",
   "description": "Checkout git branches interactively",
-  "main": "lib/gic.js",
+  "main": "lib/src/gic.js",
   "bin": {
-    "gic": "lib/gic.js",
-    "git-interactive-checkout": "lib/gic.js"
+    "gic": "lib/src/gic.js",
+    "git-interactive-checkout": "lib/src/gic.js"
   },
   "files": [
-    "/lib"
+    "/lib/src"
   ],
   "scripts": {
     "test": "nyc ava",
