@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import * as fuzzysort from 'fuzzysort';
-import * as git from 'simple-git/promise';
-import { SimpleGit } from 'simple-git/promise';
+import git from 'simple-git';
+import { SimpleGit } from 'simple-git';
 import * as prompts from 'prompts';
 import { highlightMatchResult, underlined } from './formatters';
 
